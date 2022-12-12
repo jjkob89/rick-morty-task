@@ -8,6 +8,8 @@ import ReactPaginate from "react-paginate";
 import CharacterTable from "./components/CharacterTable";
 import { ReactComponent as SearchIcon } from "./assets/search.svg";
 import Tooltip from "./components/Tooltip";
+import { useAppDispatch, useAppSelector } from "./rtk/storeHooks";
+import { setPageAction } from "./rtk/actions/genericActions";
 
 function App() {
     const itemsPerPage = 5;
@@ -30,6 +32,15 @@ function App() {
 
     const initialData = useGetAllCharactersQuery(undefined);
     const [fetchTrigger, fetchedData] = useLazyGetCharactersPageQuery();
+
+    const setStorePageRef = useAppDispatch();
+
+    const globalSelect = (checked: boolean) => {
+        const newData = currentData?.map((character: Character) => {
+            return { ...character, checked: checked };
+        });
+        setCurrentData(newData);
+    };
 
     useEffect(() => {
         if (initialData.isSuccess) {
@@ -73,6 +84,7 @@ function App() {
 
     const handlePageClick = (selectedItem: { selected: number }) => {
         currentPageNo.current = selectedItem.selected;
+        setStorePageRef(setPageAction(selectedItem.selected));
         const legacyPagePos =
             Math.floor(
                 (selectedItem.selected * itemsPerPage) / legacyItemsPerPage
@@ -162,7 +174,10 @@ function App() {
                         })}
                     </select>
                 </div>
-                <CharacterTable currentData={currentData} />
+                <CharacterTable
+                    currentData={currentData}
+                    globalSelect={globalSelect}
+                />
                 <ReactPaginate
                     containerClassName="pagination-container"
                     pageLinkClassName="paginate-page-link"

@@ -2,6 +2,8 @@ import { Character } from "../types/appTypes";
 import { ReactComponent as AliveIcon } from "../assets/alive.svg";
 import { ReactComponent as DeadIcon } from "../assets/death.svg";
 import { ReactComponent as UnknownIcon } from "../assets/unknown.svg";
+import React, { useEffect, useState } from "react";
+import { useAppSelector } from "../rtk/storeHooks";
 
 const CharacterTile = ({
     checked,
@@ -13,15 +15,36 @@ const CharacterTile = ({
     origin,
     image,
 }: Character) => {
+    const [optChecked, setOptChecked] = useState<boolean>(checked);
+    const currentPage = useAppSelector((state) => {
+        return state.mainReducer.currentPage;
+    });
+
+    useEffect(() => {
+        setOptChecked(false);
+    }, [currentPage]);
+
     const isAlive = (): boolean => {
         if (status.toLowerCase() === "dead") return false;
         else return true;
     };
 
+    const setChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setOptChecked(event.target.checked);
+    };
+
+    useEffect(() => {
+        setOptChecked(checked);
+    }, [checked]);
+
     return (
         <tr className={isAlive() ? "row" : "row row-dead"}>
             <td className="col-sel">
-                <input type="checkbox" />
+                <input
+                    type="checkbox"
+                    checked={optChecked}
+                    onChange={setChecked}
+                />
             </td>
             <td className="col-character">
                 <div

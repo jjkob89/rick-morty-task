@@ -1,3 +1,5 @@
+import React from "react";
+
 export interface Character {
     checked: boolean;
     id: number;
@@ -23,4 +25,5 @@ export interface CharactersSet {
 
 export interface TableData {
     currentData: Character[] | undefined;
+    globalSelect: (checked: boolean) => void;
 }

@@ -1,8 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { apiRickMorty } from "./api";
+import { mainReducer } from "./reducers/mainReducer";
 
 export const store = configureStore({
     reducer: {
+        mainReducer: mainReducer,
         [apiRickMorty.reducerPath]: apiRickMorty.reducer,
     },
     middleware: (getDefaultMiddleware) => {
